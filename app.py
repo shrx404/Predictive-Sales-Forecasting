@@ -11,15 +11,15 @@ st.set_page_config(page_title="Sales Forecasting Dashboard", page_icon="📈", l
 st.markdown("""
 <style>
     .stMetric {
-        background-color: #ffffff;
+        background-color: #1f1f1f;
         padding: 15px;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border: 1px solid #e0e0e0;
+        box-shadow: 0 4px 6px rgba(255,255,255,0.05);
+        border: 1px solid #333333;
     }
     .main-header {
         font-weight: 700;
-        color: #2c3e50;
+        color: #1abc9c;
         margin-bottom: 20px;
     }
 </style>
@@ -66,11 +66,15 @@ if page == "Sales Overview":
     total_sales = df['Sales'].sum()
     total_orders = df.shape[0]
     avg_order = df['Sales'].mean()
+    total_customers = df['Customer ID'].nunique()
+    total_products = df['Product ID'].nunique()
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("Total Revenue", f"${total_sales:,.2f}")
     col2.metric("Total Orders", f"{total_orders:,}")
     col3.metric("Avg Order Value", f"${avg_order:,.2f}")
+    col4.metric("Total Customers", f"{total_customers:,}")
+    col5.metric("Total Products", f"{total_products:,}")
     
     st.markdown("---")
     
@@ -79,7 +83,7 @@ if page == "Sales Overview":
     # Yearly Sales Bar Chart
     yearly_sales = df.groupby('Year')['Sales'].sum().reset_index()
     fig_year = px.bar(yearly_sales, x='Year', y='Sales', title="Total Sales by Year", 
-                      color='Sales', color_continuous_scale='Blues')
+                      color='Sales', color_continuous_scale='Mint')
     fig_year.update_layout(xaxis_type='category')
     col_chart1.plotly_chart(fig_year, use_container_width=True)
     
@@ -87,8 +91,29 @@ if page == "Sales Overview":
     monthly_sales_df = monthly_sales.reset_index()
     fig_month = px.line(monthly_sales_df, x='Order Date', y='Sales', title="Monthly Sales Trend",
                         markers=True, line_shape="spline")
-    fig_month.update_traces(line_color='#2c3e50', line_width=3)
+    fig_month.update_traces(line_width=3)
     col_chart2.plotly_chart(fig_month, use_container_width=True)
+    
+    st.markdown("---")
+    
+    # New row of charts
+    row2_col1, row2_col2, row2_col3 = st.columns(3)
+    
+    # Sales by Segment (Donut)
+    segment_sales = df.groupby('Segment')['Sales'].sum().reset_index()
+    fig_seg = px.pie(segment_sales, values='Sales', names='Segment', title="Sales by Segment", hole=0.4)
+    row2_col1.plotly_chart(fig_seg, use_container_width=True)
+    
+    # Top 10 Cities
+    city_sales = df.groupby('City')['Sales'].sum().reset_index().sort_values('Sales', ascending=False).head(10)
+    fig_city = px.bar(city_sales, x='Sales', y='City', orientation='h', title="Top 10 Cities by Sales", color='Sales', color_continuous_scale='Mint')
+    fig_city.update_layout(yaxis={'categoryorder':'total ascending'})
+    row2_col2.plotly_chart(fig_city, use_container_width=True)
+    
+    # Sales by Ship Mode
+    ship_sales = df.groupby('Ship Mode')['Sales'].sum().reset_index()
+    fig_ship = px.pie(ship_sales, values='Sales', names='Ship Mode', title="Sales by Ship Mode")
+    row2_col3.plotly_chart(fig_ship, use_container_width=True)
     
     st.markdown("### Regional & Category Breakdown")
     # Filters
@@ -138,17 +163,24 @@ elif page == "Forecast Explorer":
             # Historical
             fig.add_trace(go.Scatter(x=historical_monthly.index, y=historical_monthly.values,
                                      mode='lines+markers', name='Historical Sales',
-                                     line=dict(color='#2980b9', width=2)))
+                                     line=dict(width=2)))
             
             # Forecast
             fig.add_trace(go.Scatter(x=forecast_series.index, y=forecast_series.values,
                                      mode='lines+markers', name='Forecast (SARIMA)',
-                                     line=dict(color='#e74c3c', width=2, dash='dash')))
+                                     line=dict(width=2, dash='dash')))
                                      
             fig.update_layout(title=f"{segment} Sales Forecast",
                               xaxis_title="Date", yaxis_title="Sales ($)",
                               hovermode="x unified")
             st.plotly_chart(fig, use_container_width=True)
+            
+            st.markdown("### Forecast Values")
+            forecast_df = forecast_series.reset_index()
+            forecast_df.columns = ['Date', 'Forecasted Sales']
+            forecast_df['Date'] = forecast_df['Date'].dt.strftime('%Y-%m')
+            forecast_df['Forecasted Sales'] = forecast_df['Forecasted Sales'].apply(lambda x: f"${x:,.2f}")
+            st.dataframe(forecast_df, hide_index=True, use_container_width=True)
         else:
             st.error(f"No forecast data available for {segment}.")
 
@@ -163,7 +195,7 @@ elif page == "Anomaly Report":
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=weekly_df.index, y=weekly_df['Sales'],
                              mode='lines', name='Weekly Sales',
-                             line=dict(color='#34495e', width=2)))
+                             line=dict(width=2)))
                              
     fig.add_trace(go.Scatter(x=anomalies_if.index, y=anomalies_if['Sales'],
                              mode='markers', name='Anomaly (Isolation Forest)',
