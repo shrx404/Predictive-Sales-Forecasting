@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import joblib
 import os
 
-st.set_page_config(page_title="Demand Intelligence Dashboard", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Sales Forecasting Dashboard", page_icon="📈", layout="wide")
 
 # Custom CSS for better styling
 st.markdown("""
