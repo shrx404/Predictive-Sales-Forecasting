@@ -152,6 +152,50 @@ SalesForecasting/
 
 ---
 
+## Visual Analytics Gallery
+
+Here is a collection of all the visual outputs and charts generated during the exploratory data analysis and model training phases:
+
+### Sales & Trends
+- **Monthly Sales Trend:**
+  ![Monthly Sales Trend](charts/monthly_sales_trend.png)
+- **Monthly Seasonality:**
+  ![Monthly Seasonality](charts/monthly_seasonality.png)
+- **Revenue by Category:**
+  ![Revenue by Category](charts/revenue_by_category.png)
+- **Shipping Time by Region:**
+  ![Shipping Time by Region](charts/shipping_time_by_region.png)
+- **Differenced Sales:**
+  ![Differenced Sales](charts/differenced_sales.png)
+- **Time Series Decomposition:**
+  ![Time Series Decomposition](charts/time_series_decomposition.png)
+
+### Forecasting Models
+- **Prophet Components:**
+  ![Prophet Components](charts/prophet_components.png)
+- **Prophet Forecast:**
+  ![Prophet Forecast](charts/prophet_forecast.png)
+- **SARIMA Forecast:**
+  ![SARIMA Forecast](charts/sarima_forecast.png)
+- **XGBoost Forecast:**
+  ![XGBoost Forecast](charts/xgboost_forecast.png)
+- **Segment Forecast Comparison:**
+  ![Segment Forecast Comparison](charts/segment_forecast_comparison.png)
+
+### Anomaly Detection
+- **Isolation Forest:**
+  ![Isolation Forest](charts/anomaly_isolation_forest.png)
+- **Z-Score Method:**
+  ![Z-Score Method](charts/anomaly_zscore.png)
+
+### Product Segmentation
+- **Elbow Method (K-Means):**
+  ![Elbow Method](charts/elbow_method.png)
+- **Demand Clusters (PCA):**
+  ![Demand Clusters (PCA)](charts/demand_clusters_pca.png)
+
+---
+
 ## Contributing
 
 Contributions are welcome! If you'd like to add new forecasting models or improve the dashboard UI, please fork the repository and submit a Pull Request.
